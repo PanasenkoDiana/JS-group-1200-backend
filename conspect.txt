@@ -61,3 +61,8 @@ ORM - Object, Relational, Mapping - Це шар між кодом та базо�
 
  npx prisma --version - виводить версію прізми
  npx create-db@latest - команда для створення тимчасової бази данних
+
+ npx prisma db init -- створює таблиці в пустій базі данних. Виконуємо тільки після emit
+ npx prisma db update -- дозволяє оновити db
+ npx prisma db sign --db -- підписує бд за посиланням
+ npx prisma db verify -- перевірка співпадіння і валідності схеми

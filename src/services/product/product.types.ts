@@ -9,6 +9,6 @@ export interface CreateProductInput {
 
 export interface ProductService {
     getProducts(take?: number): Promise<Product[]>
-    getProductById(id: number): Promise<Product | undefined>
+    getProductById(id: number): Promise<Product | null>
     createProduct(input: CreateProductInput): Promise<Product | null>
 }

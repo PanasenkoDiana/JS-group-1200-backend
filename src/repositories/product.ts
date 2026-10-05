@@ -1,64 +1,36 @@
 import type { Product } from "../domain/product/entity.ts"
 import type { ProductRepository } from "../domain/product/repository.ts"
 
-export function createProductRepository(): ProductRepository {
-    let products: Product[]= [
-    {
-        id: 1,
-        name: "test",
-        price: 100,
-        category: "test1category",
-        image: '1.png'
-    },
-    {
-        id: 2,
-        name: "test2",
-        price: 101,
-        category: "test1category",
-        image: '1.png'
-    },
-    {
-        id: 3,
-        name: "test3",
-        price: 102,
-        category: "test2category",
-        image: '1.png'
-    },
-    {
-        id: 4,
-        name: "test4",
-        price: 101,
-        category: "test3category",
-        image: '1.png'
-    },
-    {
-        id: 5,
-        name: "test5",
-        price: 101,
-        category: "test1category",
-        image: '1.png'
-    }
-    ]
+// отримуємо тип prisma database client
+type DataBase = typeof import("../prisma/db.js").db
+
+export function createProductRepository(database: DataBase): ProductRepository {
     return {
         async getAll(take){
-            return take === undefined ? [...products] : products.slice(0, take)
+            // database - підключення до БД 
+            // ORM - інструмент для роботи з БД
+            //  public - схема БД
+            // Product - таблиця продуктів
+            // orderBy - сортируємо продукти
+            // product.id.asc - сортируємо продукти зо зростанням id (desc - за зменшенням)
+            const query = database.orm.public.Product.orderBy((product) => 
+                product.id.asc()
+            ) 
+            if (!take){
+                return query.all()
+            }
+            // limit - обмежує число продуктів
+            // all - отримує всі знайдені продукти
+            return query.limit(take).all()
         },
         async getById(id){
-            return products.find(
-                (product)=>{product.id === id}
-            )
+            // where - знайти продукт з указаним параметром
+            // .first - взяти перший знайденний продукт
+            return database.orm.public.Product.where({id}).first()
         },
         async createProduct(data){
-            await new Promise<void>((resolve)=>{
-                setTimeout(resolve, 500)
-            })
-            const newId = products.length + 1
-            const product =  {
-                id: newId,
-                ...data
-            }
-            products = [...products, product]
-            return product
+            // create - створення нового продукту у базі данних
+            return database.orm.public.Product.create(data)
         }
     }
 }

@@ -1,9 +1,9 @@
 // use prisma-8
 
-model Product(
-  id  Int @id @default(autoincrement(id))
+model Product{
+  id  Int @id @default(autoincrement())
   name String  @unique 
   price Int
   image String @default("")
   category String
-)
+}
