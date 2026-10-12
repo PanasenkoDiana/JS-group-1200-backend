@@ -66,3 +66,14 @@ ORM - Object, Relational, Mapping - Це шар між кодом та базо�
  npx prisma db update -- дозволяє оновити db
  npx prisma db sign --db -- підписує бд за посиланням
  npx prisma db verify -- перевірка співпадіння і валідності схеми
+
+primary key - головний ключ, це унікальний номер запису у своїй таблиці
+foreign key - зовнішній ключ, це поле яке вказує на запис в іншій таблиці
+1. one-to-one(1:1) - один до одного 
+2. many-to-many(m:n) - багато до багатьох
+3. one-to-many(1:n) - один до багатьох
+
+
+categoryId Int - звичайне поле для ідентифікатора категорії
+category Category @relation(fields: [categoryId], references: [id]) - 
+спосіб зв'язку щоб прізма знайшла потрібну категорі. за ідентифікатором

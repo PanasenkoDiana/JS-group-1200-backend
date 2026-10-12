@@ -82,12 +82,12 @@ export function createProductHandler(
                 return;
                 }
 
-                const { name, price, image, category } = body;
+                const { name, price, image, categoryId } = body;
 
                 if (
                 typeof name !== "string" || name.trim().length === 0 ||
                 typeof price !== "number" || !Number.isFinite(price) || price <= 0 ||
-                typeof category !== "string" || category.trim().length === 0 ||
+                typeof categoryId !== "number" || !Number.isInteger(categoryId) || categoryId <= 0 ||
                 (image !== undefined && typeof image !== "string")
                 ) {
                 res.status(422).json({ message: "Invalid product data" });
@@ -95,7 +95,7 @@ export function createProductHandler(
                 }
 
                 const product = await productService.createProduct({
-                name, price, image, category,
+                name, price, image, categoryId,
                 });
 
                 if (!product) {
@@ -105,8 +105,29 @@ export function createProductHandler(
 
                 res.status(201).json(product);
             } catch (error) {
-                console.error(error);
-                res.status(500).json({ message: "Internal server error" });
+                if (
+                    error instanceof Error && 
+                    error.message === "CATEGORY_NOT_FOUND"
+                ){
+                    res.status(404).json({ message: "Category not found"});
+                    return;
+                }
+                if (
+                    error instanceof Error && 
+                    error.message === "PRODUCT_ALREADY_EXIST"
+                ){
+                    res.status(409).json({message: "Product already exists"});
+                    return;
+                }
+                if (
+                    error instanceof Error && 
+                    error.message === "INVALID_PRODUCT_DATA"
+                ){
+                    res.status(422).json({message: "Invalid product data" });
+                    return;
+                }
+                console.error(error)
+                res.status(500).json({message: "Internal server error"});
             }
         },
     };

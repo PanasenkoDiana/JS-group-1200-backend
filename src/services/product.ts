@@ -3,8 +3,8 @@ import type { CreateProductInput, ProductService } from "./product/product.types
 
 export function createProductService(repository: ProductRepository): ProductService {
     return {
-        getProducts(take?: number) {
-            return repository.getAll(take)  
+        getProducts(take?: number, categoryId?: number){
+            return repository.getAll(take, categoryId)  
         },
         getProductById(id: number) {
             return repository.getById(id)
@@ -25,7 +25,7 @@ export function createProductService(repository: ProductRepository): ProductServ
                 name,
                 price: input.price,
                 image: input.image ?? "",
-                category: input.category.trim()
+                categoryId: input.categoryId
             })
         }
     }
