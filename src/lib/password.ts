@@ -1,6 +1,5 @@
 import "dotenv/config"
 import argon2 from "argon2"
-import type { SrvRecord } from "node:dns"
 const pepperHex = process.env.PASSWORD_PEPPER
 
 if (!pepperHex) throw new Error("PASSWORD_PEPPER is not defined")
@@ -16,8 +15,6 @@ export function hashPassword(password: string): Promise<string>{
     })
 }
 
-export function verifyPassword(
-    hash: string, password: string
-): Promise<boolean>{
+export function verifyPassword(hash: string, password: string): Promise<boolean>{
     return argon2.verify(hash, password, {secret: pepper})
 }
