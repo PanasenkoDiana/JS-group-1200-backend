@@ -119,3 +119,21 @@ cookie - це невелике значення яке сервер встано
 
 npm install argon2 jsonwebtoken
 npm install -D @types/jsonwebtoken
+
+RTX query - інструмент із redux toolkit для отримання й оновлення 
+серверних данних у react
+API - спосіб яким фронтенд звертається до бекенду
+endpoint - конкрентний машрут на сервері 'get/products'
+
+CORS - механізм безпеки у браузері
+    CROSS-ORIGIN RESOURCE SHARING - дозволяє серверу 
+    повідомити чи може веб сторінка відправляти запити
+    npm i cors - встановлює бібліотеку для роботи з CORS
+    npm i -D @types/cors - встановлює типи для cors
+Redux toolkit - це офіційний рекомендованний інструмент 
+для напісання логіки керування стану 
+Види стану:
+    1. Products []
+    2. isLoading - стан завантаження
+    3. isError - стан помилки
+npm i @reduxjs/toolkit react-redux
