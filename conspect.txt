@@ -137,3 +137,9 @@ Redux toolkit - це офіційний рекомендованний інст�
     2. isLoading - стан завантаження
     3. isError - стан помилки
 npm i @reduxjs/toolkit react-redux
+
+middleware - проміжний обробник - функція, яка виконується
+ при обробці http запиту частіше перед основним handler
+
+npm i cookie-parser - встановлюємо бібліотеку для читання cookie
+npm i -D @types/cookie-parser - типи для бібліотеки

@@ -10,6 +10,10 @@ export function createUserRepository(
         return database.orm.public.User.where({ email }).first();
     },
 
+    async getById(id) {
+        return database.orm.public.User.where({id}).first()
+    },
+
     async createUser(data) {
         try {
         return await database.orm.public.User.create(data);

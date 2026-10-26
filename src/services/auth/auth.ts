@@ -1,11 +1,12 @@
 import type { UserRepository } from "../../domain/user/repository.js"
 
-import type { AuthService, PasswordHasher, TokenSign } from "./auth.types.js"
+import type { AuthService, PasswordHasher, TokenSign, TokenVerify } from "./auth.types.js"
 
 export function createAuthService(
     repository: UserRepository,
     passwordHasher: PasswordHasher,
-    tokenSign: TokenSign
+    tokenSign: TokenSign,
+    tokenVerify: TokenVerify
 ): AuthService{
     return{
      async register(input){
@@ -28,8 +29,26 @@ export function createAuthService(
                 id: user.id,
                 email: user.email
             },
-            accessToken: tokenSign.signAccessToken(user.id)
+            accessToken: tokenSign.signAccessToken(user.id),
+            refreshToken: tokenSign.signRefreshToken(user.id)
         }   
+     }, 
+     async refresh(refreshToken) {
+        const userId = tokenVerify.verifyRefreshToken(refreshToken)
+        const user = await repository.getById(userId)
+        if (!user) throw new Error("INVALID_REFRESH_TOKEN")
+        return{
+            accessToken: tokenSign.signAccessToken(user.id),
+            refreshToken: tokenSign.signRefreshToken(user.id)
+        }
+     },
+     async me(userId) {
+        const user = await repository.getById(userId)
+        if (!user) throw new Error("UNAUTHORIZED")
+        return{
+            id: user.id,
+            email: user.email
+        }
      }
     }
 } 
