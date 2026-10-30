@@ -1,0 +1,22 @@
+// use prisma-8
+
+model Product{
+  id  Int @id @default(autoincrement())
+  name String  @unique 
+  price Int
+  image String @default("")
+  categoryId Int
+  category Category @relation(fields: [categoryId], references: [id])
+}
+
+model Category{
+  id Int @id @default(autoincrement())
+  name String  @unique
+  products Product[]
+}
+
+model User{
+  id Int @id @default(autoincrement())
+  email String @unique
+  passwordHash String
+}
