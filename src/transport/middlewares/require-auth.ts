@@ -1,5 +1,6 @@
 import type { RequestHandler } from "express";
 
+// Проверка авторизации по JWT 
 export function createRequireAuth(
     verifyAccessToken: (token: string)=> number
 ): RequestHandler{
