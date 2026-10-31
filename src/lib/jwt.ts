@@ -1,11 +1,11 @@
 import "dotenv/config"
 import jwt from "jsonwebtoken";
-
 const accessSecret = process.env.JWT_ACCESS_SECRET;
 const refreshSecret = process.env.JWT_REFRESH_SECRET;
+// перевіряємо наявність accessSecret та refreshSecret, якщо вони не знайдені виводимо помилку
 if (!accessSecret) throw new Error("JWT_ACCESS_SECRET is not defined");
 if (!refreshSecret) throw new Error("JWT_REFRESH_SECRET is not defined");
-
+// функція signAccessToken приймає userId та повертає JWT токен 
 export function signAccessToken(userId: number): string {
   return jwt.sign({}, accessSecret!, {
     algorithm: "HS256",          
@@ -13,7 +13,7 @@ export function signAccessToken(userId: number): string {
     expiresIn: "15m",            
   });
 }
-
+// функція signRefreshToken приймає userId та повертає JWT token з 'refresh'
 export function signRefreshToken(userId: number): string {
   return jwt.sign({type: "refresh"}, refreshSecret!, {
     algorithm: "HS256",          
@@ -21,7 +21,7 @@ export function signRefreshToken(userId: number): string {
     expiresIn: "7d",            
   });
 }
-
+// функція verifyAccessToken приймає token та повертає userId якщо: token дійсний, виводить помилку, токен недійсний
 export function verifyAccessToken(token: string): number {
   try {
     const payload = jwt.verify(token, accessSecret!, {
@@ -40,7 +40,7 @@ export function verifyAccessToken(token: string): number {
     throw new Error("INVALID_ACCESS_TOKEN")
   }
 }
-
+// функція verifyRefreshToken приймає token та повертає userId, якщо token дійсний і має тип "refresh", якщо ні то виводить помилку
 export function verifyRefreshToken(token: string): number {
   try {
     const payload = jwt.verify(token, refreshSecret!, {
