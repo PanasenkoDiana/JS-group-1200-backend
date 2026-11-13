@@ -15,8 +15,18 @@ model Category{
   products Product[]
 }
 
-model User{
-  id Int @id @default(autoincrement())
-  email String @unique
-  passwordHash String
+model User { 
+  id           Int              @id @default(autoincrement()) 
+  email        String           @unique 
+  passwordHash String 
+  sessions     RefreshSession[] 
+} 
+ 
+model RefreshSession { 
+  id        Int      @id @default(autoincrement()) 
+  userId    Int 
+  tokenHash String   @unique 
+  expiresAt DateTime 
+  createdAt DateTime @default(now()) 
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade) 
 }

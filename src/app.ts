@@ -13,10 +13,11 @@ import cookieParser from "cookie-parser";
 import { createRequireAuth } from "./transport/middlewares/require-auth.js";
 import {
   signAccessToken, signRefreshToken,
-  verifyAccessToken, verifyRefreshToken,
+  verifyAccessToken, verifyRefreshToken, hashRefreshToken
 } from "./lib/jwt.js";
 import cors from 'cors';
 import { createProductService } from './services/product.js';
+import { createRefreshSessionRepository } from './repositories/refresh-session.js';
 //const express = require('express');
 
 const app = express();
@@ -27,12 +28,16 @@ const productRouter = createProductRouter(productHandlers)
 
 
 const userRepository = createUserRepository(db);
+const refreshSessions = createRefreshSessionRepository(db);
 const authService = createAuthService(
   userRepository,
   { hash: hashPassword, verify: verifyPassword },
   { signAccessToken, signRefreshToken },
   { verifyRefreshToken },
+  refreshSessions,
+  { hash: hashRefreshToken },
 );
+
 const authHandlers = createAuthHandlers(authService);
 const requireAuth = createRequireAuth(verifyAccessToken);
 const authRouter = createAuthRouter(authHandlers, requireAuth);

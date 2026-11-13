@@ -28,4 +28,9 @@ export interface AuthService {
     login(input: AuthInput): Promise<{user: PublicUser} & AuthTokens>
     refresh(refreshToken: string): Promise<AuthTokens>
     me(userId: number): Promise<PublicUser>
+    logout(refreshToken?: string): Promise<void>;
+}
+
+export interface RefreshTokenHasher {
+  hash(token: string): string;
 }

@@ -13,6 +13,7 @@ export interface AuthHandlers {
   ): Promise<void>;
   refresh(req: Request, res: Response): Promise<void>;
   me(req: Request, res: Response): Promise<void>;
+  logout(req: Request, res: Response): Promise<void>;
 }
 
 const secure = process.env.NODE_ENV === "production";
@@ -104,6 +105,44 @@ export function createAuthHandlers(service: AuthService): AuthHandlers {
         console.error(error);
         res.status(500).json({ message: "Internal server error" });
       }
+    },
+    async logout(req, res) {
+      try {
+        // Получаем refresh-токен из cookies пользователя
+        const token = req.cookies?.refreshToken;
+
+        // Вызываем метод logout и передаём токен,
+        // если он является строкой, иначе передаём undefined
+        await service.logout(
+            typeof token === "string" ? token : undefined,
+        );
+
+        // Удаляем access-токен из cookies
+        res.clearCookie("accessToken", {
+            httpOnly: true, // Запрещаем доступ к cookie через JavaScript в браузере
+            secure,         // Передаём cookie только через HTTPS, если secure = true
+            sameSite: "lax", // Ограничиваем отправку cookie при переходах с других сайтов
+            path: "/",       // Cookie доступна для всего сайта
+        });
+
+        // Удаляем refresh-токен из cookies
+        res.clearCookie("refreshToken", {
+            httpOnly: true,
+            secure,
+            sameSite: "lax",
+            path: "/auth", // Cookie доступна только для маршрутов /auth
+        });
+
+        // Отправляем ответ об успешном выходе из аккаунта
+        res.status(200).json({ message: "Logged out" });
+
+    } catch (error) {
+        // Выводим информацию об ошибке в консоль сервера
+        console.error(error);
+
+        // Отправляем клиенту ошибку сервера
+        res.status(500).json({ message: "Internal server error" });
+    }
     },
   };
 }

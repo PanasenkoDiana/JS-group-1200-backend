@@ -7,3 +7,11 @@ export const db = postgres<Contract>({
   contractJson,
   url: process.env['DATABASE_URL']!,
 });
+
+import { Temporal } from "@js-temporal/polyfill";
+
+Object.defineProperty(globalThis, 'Temporal', {
+  value: Temporal,
+  writable: true,
+  configurable: true,
+});
