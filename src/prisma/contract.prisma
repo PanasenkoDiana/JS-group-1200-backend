@@ -19,4 +19,14 @@ model User{
   id Int @id @default(autoincrement())
   email String @unique
   passwordHash String
+  sessions RefreshSessions[]
+}
+
+model RefreshSessions{
+  id Int @id @default(autoincrement())
+  userId Int 
+  tokenHash String
+  expiresAt DateTime
+  createdAt DateTime
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
