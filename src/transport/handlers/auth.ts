@@ -13,6 +13,7 @@ export interface AuthHandlers {
   ): Promise<void>;
   refresh(req: Request, res: Response): Promise<void>;
   me(req: Request, res: Response): Promise<void>;
+  logout(req: Request, res: Response): Promise<void>
 }
 
 const secure = process.env.NODE_ENV === "production";
@@ -75,7 +76,6 @@ export function createAuthHandlers(service: AuthService): AuthHandlers {
         res.status(401).json({ message: "Unauthorized" });
         return;
       }
-
       try {
         const tokens = await service.refresh(token);
 
@@ -105,5 +105,33 @@ export function createAuthHandlers(service: AuthService): AuthHandlers {
         res.status(500).json({ message: "Internal server error" });
       }
     },
+    async logout(req, res) {
+
+      try {
+        const token = req.cookies?.refreshToken
+        await service.logout(
+          typeof token === 'string' ? token : undefined
+        ) 
+        
+        res.clearCookie('accessToken',{
+          httpOnly: true,
+          secure,
+          sameSite: 'lax',
+          path: '/'
+        })
+
+        res.clearCookie('refreshToken',{
+          httpOnly: true,
+          secure,
+          sameSite: 'lax',
+          path: '/auth'
+        })
+
+        res.status(200).json({ message: 'Logout successfully'}) 
+      } catch(error){
+        console.error(error)
+        res.status(500).json({ message: 'Internal server ERROR'})
+      }
+    }
   };
 }
