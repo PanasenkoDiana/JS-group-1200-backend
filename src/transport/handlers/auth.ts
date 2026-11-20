@@ -61,7 +61,7 @@ export function createAuthHandlers(service: AuthService): AuthHandlers {
         setAuthCookies(res, result);
         res.status(200).json({ user: result.user });
       } catch (error) {
-        if (error instanceof Error && error.message === "INVALID_CREDENTIALS") {
+        if (error instanceof Error && error.message === "INVALID_DATA") {
           res.status(401).json({ message: "Invalid credentials" });
           return;
         }
