@@ -1,4 +1,4 @@
-export interface AuthCredentialRequest{
-    email: string
-    password: string
+export interface AuthCredentialRequest {
+	email: string;
+	password: string;
 }
