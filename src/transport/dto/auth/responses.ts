@@ -1,4 +1,4 @@
-export interface AuthUserResponse{
-    id: number
-    email: string
+export interface AuthUserResponse {
+	id: number;
+	email: string;
 }

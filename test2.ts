@@ -1,9 +1,9 @@
-import { createRepository } from "*"
+import type { createRepository } from "*";
 
-export function createServise(repository: createRepository){
-    return{
-        getProducts(take? : number){
-            return repository.getAll(take)
-        }
-    }
+export function createServise(repository: createRepository) {
+	return {
+		getProducts(take?: number) {
+			return repository.getAll(take);
+		},
+	};
 }
