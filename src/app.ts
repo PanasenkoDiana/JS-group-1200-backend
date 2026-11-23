@@ -42,7 +42,7 @@ const authHandlers = createAuthHandlers(authService);
 const requireAuth = createRequireAuth(verifyAccessToken);
 const authRouter = createAuthRouter(authHandlers, requireAuth);
 
-app.use(cors({ origin: 'http://localhost:5173' }));
+app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 
 app.use(express.json())
 app.use(cookieParser());
