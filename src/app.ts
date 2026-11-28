@@ -7,7 +7,7 @@ import {
 	signRefreshToken,
 	verifyAccessToken,
 	verifyRefreshToken,
-} from "./lib/jwt.js";
+} from "./lib/token.js";
 import { hashPassword, verifyPassword } from "./lib/password.js";
 import { db } from "./prisma/db.js";
 import { createProductRepository } from "./repositories/product.js";

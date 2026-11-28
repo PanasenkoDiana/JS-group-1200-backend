@@ -9,13 +9,12 @@ export interface PasswordHasher {
 	verify(password: string, hash: string): Promise<boolean>;
 }
 
-export interface TokenSign {
-	signAccessToken(userId: number): string;
-	signRefreshToken(userId: number): string;
-}
-
-export interface TokenVerify {
-	verifyRefreshToken(token: string): number;
+export interface TokenService {
+	signAccess(userId: number): string;
+	signRefresh(userId: number): string;
+	verifyAccess(token: string): number;
+	verifyRefresh(token: string): number;
+	hash(token: string): string;
 }
 
 export interface AuthTokens {
