@@ -1,4 +1,4 @@
 export const ROUTES = {
-    PRODUCTS: "/products",
-    AUTH: "/auth"
-}
+	PRODUCTS: "/products",
+	AUTH: "/auth",
+};

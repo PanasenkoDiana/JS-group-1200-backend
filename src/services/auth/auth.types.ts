@@ -1,4 +1,6 @@
+import type { RefreshSessionRepository } from "../../domain/refresh-session/repository";
 import type { PublicUser } from "../../domain/user/entity";
+import type { UserRepository } from "../../domain/user/repository";
 export interface AuthInput {
 	email: string;
 	password: string;
@@ -20,6 +22,15 @@ export interface TokenService {
 export interface AuthTokens {
 	accessToken: string;
 	refreshToken: string;
+}
+
+// Додано новий інтерфейс який описує усі залежності серверу для користувача
+export interface AuthServiceDeps {
+	users: UserRepository;
+	sessions: RefreshSessionRepository;
+	passwords: PasswordHasher;
+	tokens: TokenService;
+	refreshTtlMs: number;
 }
 
 export interface AuthService {

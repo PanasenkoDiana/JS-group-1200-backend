@@ -8,7 +8,7 @@
 	"main": "index.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"dev": "tsx watch src/app.ts",
+		"dev": "tsx watch src/server.ts",
 		"db:init": "prisma db init",
 		"db:update": "prisma db update",
 		"db:verify": "prisma db verify",

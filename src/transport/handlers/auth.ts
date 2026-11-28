@@ -1,8 +1,14 @@
+import { read } from "node:fs";
 import type { Request, Response } from "express";
 import type {
 	AuthService,
 	AuthTokens,
 } from "../../services/auth/auth.types.js";
+import {
+	clearAuthCookies,
+	readRefreshToken,
+	setAuthCookies,
+} from "../cookies/auth-cookies.js";
 import type { AuthCredentialRequest } from "../dto/auth/requests.js";
 
 export interface AuthHandlers {
@@ -17,26 +23,6 @@ export interface AuthHandlers {
 	refresh(req: Request, res: Response): Promise<void>;
 	me(req: Request, res: Response): Promise<void>;
 	logout(req: Request, res: Response): Promise<void>;
-}
-
-const secure = process.env.NODE_ENV === "production";
-
-function setAuthCookies(res: Response, tokens: AuthTokens): void {
-	res.cookie("accessToken", tokens.accessToken, {
-		httpOnly: true,
-		secure,
-		sameSite: "lax",
-		maxAge: 15 * 60 * 1000,
-		path: "/",
-	});
-
-	res.cookie("refreshToken", tokens.refreshToken, {
-		httpOnly: true,
-		secure,
-		sameSite: "lax",
-		maxAge: 7 * 24 * 60 * 60 * 1000,
-		path: "/auth",
-	});
 }
 
 export function createAuthHandlers(service: AuthService): AuthHandlers {
@@ -66,7 +52,7 @@ export function createAuthHandlers(service: AuthService): AuthHandlers {
 				setAuthCookies(res, result);
 				res.status(200).json({ user: result.user });
 			} catch (error) {
-				if (error instanceof Error && error.message === "INVALID_CREDENTIALS") {
+				if (error instanceof Error && error.message === "INVALID_DATA") {
 					res.status(401).json({ message: "Invalid credentials" });
 					return;
 				}
@@ -75,12 +61,15 @@ export function createAuthHandlers(service: AuthService): AuthHandlers {
 			}
 		},
 		async refresh(req, res) {
-			const token = req.cookies?.refreshToken;
+			// Змінено отримання refresh-токена:
+			// замість прямого звернення до req.cookies використовується функція readRefreshToken().
+			const token = readRefreshToken(req);
 
 			if (typeof token !== "string") {
 				res.status(401).json({ message: "Unauthorized" });
 				return;
 			}
+
 			try {
 				const tokens = await service.refresh(token);
 
@@ -115,22 +104,16 @@ export function createAuthHandlers(service: AuthService): AuthHandlers {
 		},
 		async logout(req, res) {
 			try {
-				const token = req.cookies?.refreshToken;
+				// Змінено отримання refresh-токена:
+				// замість прямого звернення до req.cookies використовується функція readRefreshToken().
+				const token = readRefreshToken(req);
+
 				await service.logout(typeof token === "string" ? token : undefined);
 
-				res.clearCookie("accessToken", {
-					httpOnly: true,
-					secure,
-					sameSite: "lax",
-					path: "/",
-				});
-
-				res.clearCookie("refreshToken", {
-					httpOnly: true,
-					secure,
-					sameSite: "lax",
-					path: "/auth",
-				});
+				// Змінено видалення cookies:
+				// замість окремого видалення access- і refresh-токенів
+				// використовується функція clearAuthCookies().
+				clearAuthCookies(res);
 
 				res.status(200).json({ message: "Logout successfully" });
 			} catch (error) {
